@@ -1,0 +1,199 @@
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-br from-primary via-blue-600 to-background-dark py-20 lg:py-28 overflow-hidden">
+  <!-- Decorative Background Pattern -->
+  <div class="absolute inset-0 opacity-10 pointer-events-none" 
+       style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 24px 24px;"></div>
+  
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center z-10">
+    <h1 class="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-6">
+      Rotalarını Keşfet, <br class="hidden md:block"/> Paylaş, Deneyimle
+    </h1>
+    <p class="text-blue-100 text-lg md:text-xl font-normal max-w-2xl mb-10 leading-relaxed">
+      Dünya'nın her yerinden rotaları keşfedin veya kendi rotanızı oluşturun. Maceranıza bugün başlayın.
+    </p>
+    
+    <!-- Search Bar -->
+    <div class="w-full max-w-[600px] relative group mb-6">
+      <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+        <span class="material-symbols-outlined text-gray-400">search</span>
+      </div>
+      <input 
+        type="text"
+        [value]="searchQuery()"
+        (input)="updateSearchQuery($event)"
+        (keyup.enter)="onSearch()"
+        class="block w-full pl-12 pr-4 py-4 rounded-xl border-none bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-primary/30 shadow-xl transition-all text-base" 
+        placeholder="Rotanızı arayın (örn. İstanbul tarihi yerler)">
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="flex flex-wrap items-center justify-center gap-8 text-white/90">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined">map</span>
+        <span class="text-sm font-medium">{{ featuredRoutes().length }}+ Rota</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined">explore</span>
+        <span class="text-sm font-medium">{{ categories().length }} Kategori</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined">groups</span>
+        <span class="text-sm font-medium">Aktif Topluluk</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-16 bg-white dark:bg-background-dark">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Kategoriler</h2>
+      <a routerLink="/categories" class="text-primary hover:text-primary-dark font-medium text-sm flex items-center gap-1">
+        Tümünü Gör
+        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+      </a>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div *ngFor="let category of categories()" 
+           [routerLink]="['/routes']"
+           [queryParams]="{category: category.id}"
+           class="group cursor-pointer bg-slate-50 dark:bg-surface-dark hover:bg-primary/5 dark:hover:bg-primary/10 border border-border-light dark:border-border-dark rounded-lg p-6 text-center transition-all hover:shadow-hover">
+        <div class="text-4xl mb-3">{{ category.icon || '📍' }}</div>
+        <h3 class="font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
+          {{ category.name }}
+        </h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Routes Section -->
+<section class="py-16 bg-background-light dark:bg-surface-dark">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Öne Çıkan Rotalar</h2>
+      <a routerLink="/routes" class="text-primary hover:text-primary-dark font-medium text-sm flex items-center gap-1">
+        Tümünü Gör
+        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+      </a>
+    </div>
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoading()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let i of [1,2,3,4,5,6]" class="bg-white dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark p-4 animate-pulse">
+        <div class="bg-slate-200 dark:bg-slate-700 h-48 rounded-lg mb-4"></div>
+        <div class="bg-slate-200 dark:bg-slate-700 h-6 rounded mb-2"></div>
+        <div class="bg-slate-200 dark:bg-slate-700 h-4 rounded w-2/3"></div>
+      </div>
+    </div>
+    
+    <!-- Routes Grid -->
+    <div *ngIf="!isLoading()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <a *ngFor="let route of featuredRoutes()" 
+         [routerLink]="['/routes', route.routeLink]"
+         class="group bg-white dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark overflow-hidden hover:shadow-hover transition-all">
+        
+        <!-- Image -->
+        <div class="relative h-48 bg-slate-200 dark:bg-slate-700 overflow-hidden">
+          <img *ngIf="route.thumbnailUrl" 
+               [src]="route.thumbnailUrl" 
+               [alt]="route.title"
+               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+          <div *ngIf="!route.thumbnailUrl" 
+               class="w-full h-full flex items-center justify-center text-slate-400">
+            <span class="material-symbols-outlined text-6xl">route</span>
+          </div>
+          
+          <!-- View Count Badge -->
+          <div class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">visibility</span>
+            {{ route.viewCount }}
+          </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="p-4">
+          <h3 class="font-bold text-lg text-slate-900 dark:text-white group-hover:text-primary transition-colors mb-2 line-clamp-2">
+            {{ route.title }}
+          </h3>
+          <p *ngIf="route.description" class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-3">
+            {{ route.description }}
+          </p>
+          
+          <!-- Meta Info -->
+          <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+            <div class="flex items-center gap-3">
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]">location_on</span>
+                {{ route.stopCount }} Durak
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]">chat_bubble</span>
+                {{ route.commentCount }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+    
+    <!-- Empty State -->
+    <div *ngIf="!isLoading() && featuredRoutes().length === 0" 
+         class="text-center py-16">
+      <span class="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600 mb-4">explore_off</span>
+      <p class="text-slate-600 dark:text-slate-400">Henüz rota bulunmuyor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Popular Routes Section -->
+<section class="py-16 bg-white dark:bg-background-dark">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-8">Popüler Rotalar</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <a *ngFor="let route of popularRoutes(); let i = index" 
+         [routerLink]="['/routes', route.routeLink]"
+         class="group relative bg-gradient-to-br from-primary/10 to-blue-600/10 dark:from-primary/20 dark:to-blue-600/20 rounded-lg border border-primary/20 p-6 hover:shadow-hover transition-all">
+        
+        <!-- Rank Badge -->
+        <div class="absolute -top-3 -left-3 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
+          {{ i + 1 }}
+        </div>
+        
+        <h3 class="font-bold text-xl text-slate-900 dark:text-white group-hover:text-primary transition-colors mb-2 mt-2">
+          {{ route.title }}
+        </h3>
+        <div class="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
+          <span class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">visibility</span>
+            {{ route.viewCount }} görüntülenme
+          </span>
+          <span class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">location_on</span>
+            {{ route.stopCount }} durak
+          </span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-r from-primary to-blue-600">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-white text-3xl md:text-4xl font-bold mb-4">
+      Kendi Rotanı Oluşturmaya Hazır Mısın?
+    </h2>
+    <p class="text-blue-100 text-lg mb-8">
+      Deneyimlerini paylaş, rotalarını oluştur ve topluluğumuzun bir parçası ol.
+    </p>
+    <a routerLink="/routes/create" 
+       class="inline-flex items-center gap-2 bg-white text-primary hover:bg-slate-100 font-semibold px-8 py-4 rounded-lg transition-colors shadow-lg text-lg">
+      <span class="material-symbols-outlined">add_location_alt</span>
+      <span>Hemen Başla</span>
+    </a>
+  </div>
+</section>

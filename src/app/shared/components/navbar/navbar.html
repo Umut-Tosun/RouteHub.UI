@@ -1,0 +1,167 @@
+<!-- Navbar -->
+<header class="sticky top-0 z-50 w-full border-b border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      
+      <!-- Logo & Brand -->
+      <div class="flex items-center gap-8">
+        <a routerLink="/" class="flex items-center gap-2 group">
+          <div class="size-8 text-primary">
+            <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"></path>
+            </svg>
+          </div>
+          <h1 class="text-xl font-bold tracking-tight group-hover:text-primary transition-colors">RouteHub</h1>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-6">
+          <a routerLink="/" 
+             routerLinkActive="text-primary"
+             class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors">
+            Ana Sayfa
+          </a>
+          <a routerLink="/routes" 
+             routerLinkActive="text-primary" 
+             class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors">
+            Rotalar
+          </a>
+          <a routerLink="/categories" 
+             routerLinkActive="text-primary" 
+             class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors">
+            Kategoriler
+          </a>
+        </nav>
+      </div>
+
+      <!-- Right Side Actions -->
+      <div class="flex items-center gap-4">
+        
+        <!-- Theme Toggle -->
+        <button (click)="toggleTheme()" 
+                class="p-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                [attr.aria-label]="themeService.isDarkMode() ? 'Light mode geç' : 'Dark mode geç'">
+          <span class="material-symbols-outlined text-[20px]">
+            {{ themeService.isDarkMode() ? 'light_mode' : 'dark_mode' }}
+          </span>
+        </button>
+
+        <!-- Create Route Button - Desktop -->
+        <button *ngIf="authService.isAuthenticated()" 
+                (click)="navigateToCreate()"
+                class="hidden sm:flex items-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-semibold py-2 px-4 rounded transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-[20px]">add_location_alt</span>
+          <span>Rota Oluştur</span>
+        </button>
+
+        <!-- User Menu - Authenticated -->
+        <div *ngIf="authService.isAuthenticated()" class="hidden md:flex items-center gap-3">
+          <a routerLink="/profile" class="flex items-center gap-2 group">
+            <div class="h-9 w-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden ring-2 ring-white dark:ring-slate-600">
+              <img *ngIf="authService.currentUser()?.profileImageUrl" 
+                   [src]="authService.currentUser()?.profileImageUrl" 
+                   [alt]="authService.currentUser()?.userName"
+                   class="h-full w-full object-cover">
+              <div *ngIf="!authService.currentUser()?.profileImageUrl" 
+                   class="h-full w-full flex items-center justify-center text-slate-600 dark:text-slate-300 font-semibold">
+                {{ authService.currentUser()?.firstName?.charAt(0) }}{{ authService.currentUser()?.lastName?.charAt(0) }}
+              </div>
+            </div>
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">
+              {{ authService.currentUser()?.firstName }}
+            </span>
+          </a>
+          <button (click)="logout()" 
+                  class="p-2 text-slate-500 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                  title="Çıkış Yap">
+            <span class="material-symbols-outlined text-[20px]">logout</span>
+          </button>
+        </div>
+
+        <!-- Login/Register - Not Authenticated -->
+        <div *ngIf="!authService.isAuthenticated()" class="hidden md:flex items-center gap-3">
+          <a routerLink="/auth/login" 
+             class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+            Giriş Yap
+          </a>
+          <a routerLink="/auth/register" 
+             class="bg-primary hover:bg-primary-dark text-white text-sm font-semibold py-2 px-4 rounded transition-colors shadow-sm">
+            Kayıt Ol
+          </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button (click)="toggleMobileMenu()" 
+                class="md:hidden p-2 text-slate-600 dark:text-slate-400"
+                aria-label="Menu">
+          <span class="material-symbols-outlined text-[24px]">
+            {{ isMobileMenuOpen ? 'close' : 'menu' }}
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div *ngIf="isMobileMenuOpen" 
+         class="md:hidden border-t border-border-light dark:border-border-dark py-4 space-y-3">
+      
+      <a routerLink="/" 
+         (click)="toggleMobileMenu()"
+         routerLinkActive="text-primary bg-blue-50 dark:bg-blue-900/20"
+         class="block px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded transition-colors">
+        Ana Sayfa
+      </a>
+      
+      <a routerLink="/routes" 
+         (click)="toggleMobileMenu()"
+         routerLinkActive="text-primary bg-blue-50 dark:bg-blue-900/20"
+         class="block px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded transition-colors">
+        Rotalar
+      </a>
+      
+      <a routerLink="/categories" 
+         (click)="toggleMobileMenu()"
+         routerLinkActive="text-primary bg-blue-50 dark:bg-blue-900/20"
+         class="block px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded transition-colors">
+        Kategoriler
+      </a>
+
+      <div class="border-t border-border-light dark:border-border-dark my-3"></div>
+
+      <!-- Mobile - Authenticated -->
+      <div *ngIf="authService.isAuthenticated()" class="space-y-3">
+        <button (click)="navigateToCreate()"
+                class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-semibold py-2.5 px-4 rounded transition-colors">
+          <span class="material-symbols-outlined text-[20px]">add_location_alt</span>
+          <span>Rota Oluştur</span>
+        </button>
+        
+        <a routerLink="/profile" 
+           (click)="toggleMobileMenu()"
+           class="block px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded transition-colors">
+          Profilim
+        </a>
+        
+        <button (click)="logout()"
+                class="w-full text-left px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors">
+          Çıkış Yap
+        </button>
+      </div>
+
+      <!-- Mobile - Not Authenticated -->
+      <div *ngIf="!authService.isAuthenticated()" class="space-y-3">
+        <a routerLink="/auth/login" 
+           (click)="toggleMobileMenu()"
+           class="block px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded transition-colors">
+          Giriş Yap
+        </a>
+        
+        <a routerLink="/auth/register" 
+           (click)="toggleMobileMenu()"
+           class="block px-4 py-2 text-sm font-medium bg-primary text-white hover:bg-primary-dark rounded transition-colors text-center">
+          Kayıt Ol
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

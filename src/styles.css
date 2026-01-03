@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+/* Tailwind CSS v4: Dark mode için class selector tanımı */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Theme renkleri */
+@theme {
+  --color-primary: #3c83f6;
+  --color-primary-dark: #1d4ed8;
+  --color-background-light: #f5f7f8;
+  --color-background-dark: #101722;
+  --color-surface-light: #ffffff;
+  --color-surface-dark: #1e293b;
+  --color-border-light: #e2e8f0;
+  --color-border-dark: #334155;
+  
+  --font-display: Inter, sans-serif;
+}
+
+/* Light mode için color-scheme ayarı */
+:root {
+  color-scheme: light;
+}
+
+/* Dark mode için color-scheme ayarı */
+:root.dark {
+  color-scheme: dark;
+}
+
+/* Dark mode background transition */
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Body stilleri */
+body {
+  font-family: var(--font-display);
+  @apply bg-background-light dark:bg-background-dark text-slate-900 dark:text-white;
+}
+
+/* Material Icons weight fix */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100 dark:bg-slate-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 dark:bg-slate-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400 dark:bg-slate-500;
+}
