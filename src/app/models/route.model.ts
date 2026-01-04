@@ -5,6 +5,8 @@ export interface Stop {
   latitude: number;
   longitude: number;
   orderNumber: number;
+  imageUrl?: string;
+  duration?: number;
 }
 
 export interface Comment {
@@ -69,4 +71,24 @@ export enum RouteStatus {
   Draft = 1,
   Active = 2,
   Archived = 3
+}
+
+export interface CreateRouteRequest {
+  title: string;
+  description?: string;
+  routeLink: string;
+  isPublic: boolean;
+  thumbnailUrl?: string;
+}
+
+export interface CreateStopRequest {
+  routeId: string;
+  title: string;
+  description?: string;
+  latitude: number;
+  longitude: number;
+  orderNumber: number;
+  address?: string;
+  imageUrl?: string;
+  duration?: number;
 }

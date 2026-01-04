@@ -1,0 +1,122 @@
+<div class="min-h-screen bg-background-light dark:bg-background-dark">
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-primary via-blue-600 to-background-dark py-12 lg:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Tüm Rotalar</h1>
+      <p class="text-blue-100 text-lg max-w-2xl">
+        Dünya'nın her yerinden rotaları keşfedin ve maceranıza ilham bulun.
+      </p>
+    </div>
+  </section>
+
+  <!-- Filters & Search Section -->
+  <section class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col lg:flex-row gap-4">
+        <!-- Search Bar -->
+        <div class="flex-1 relative">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <span class="material-symbols-outlined text-slate-400">search</span>
+          </div>
+          <input 
+            type="text"
+            [value]="searchQuery()"
+            (input)="onSearchChange($event)"
+            class="block w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            placeholder="Rota ara (başlık, kategori, açıklama)...">
+        </div>
+
+        <!-- Sort Dropdown -->
+        <div class="relative">
+          <select 
+            [value]="sortOption()"
+            (change)="onSortChange($any($event.target).value)"
+            class="appearance-none bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 py-3 pl-4 pr-10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer">
+            <option value="newest">En Yeni</option>
+            <option value="popular">En Popüler</option>
+            <option value="views">En Çok Görüntülenen</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+            <span class="material-symbols-outlined text-sm">expand_more</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Pills -->
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button 
+          (click)="onCategoryClick(null)"
+          [class.bg-primary]="!selectedCategoryId()"
+          [class.text-white]="!selectedCategoryId()"
+          [class.bg-slate-100]="selectedCategoryId()"
+          [class.dark:bg-slate-800]="selectedCategoryId()"
+          [class.text-slate-700]="selectedCategoryId()"
+          class="px-4 py-2 rounded-full text-sm font-medium transition-colors">
+          Tümü
+        </button>
+        @for (category of categories(); track category.id) {
+          <button 
+            (click)="onCategoryClick(category.id)"
+            [class.bg-primary]="selectedCategoryId() === category.id"
+            [class.text-white]="selectedCategoryId() === category.id"
+            [class.bg-slate-100]="selectedCategoryId() !== category.id"
+            [class.dark:bg-slate-800]="selectedCategoryId() !== category.id"
+            [class.text-slate-700]="selectedCategoryId() !== category.id"
+            class="px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2">
+            @if (category.icon) {
+              <span>{{ category.icon }}</span>
+            }
+            <span>{{ category.name }}</span>
+          </button>
+        }
+      </div>
+
+      <!-- Active Filters Info -->
+      @if (searchQuery() || selectedCategoryId()) {
+        <div class="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+          <span>{{ filteredRoutes().length }} rota bulundu</span>
+          <button 
+            (click)="clearFilters()"
+            class="text-primary hover:text-primary-dark font-medium underline">
+            Filtreleri Temizle
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Routes Grid -->
+  <section class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    @if (isLoading()) {
+      <div class="flex items-center justify-center py-20">
+        <div class="text-center">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p class="text-slate-600 dark:text-slate-400">Rotalar yükleniyor...</p>
+        </div>
+      </div>
+    } @else if (filteredRoutes().length === 0) {
+      <div class="text-center py-20">
+        <span class="material-symbols-outlined text-6xl text-slate-400 mb-4">explore</span>
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Rota bulunamadı</h3>
+        <p class="text-slate-600 dark:text-slate-400 mb-4">
+          Arama kriterlerinize uygun rota bulunamadı. Filtreleri değiştirmeyi deneyin.
+        </p>
+        <button 
+          (click)="clearFilters()"
+          class="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-lg font-medium transition-colors">
+          Filtreleri Temizle
+        </button>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        @for (route of filteredRoutes(); track route.id) {
+          <app-route-card 
+            [route]="route"
+            (click)="onRouteCardClick(route)">
+          </app-route-card>
+        }
+      </div>
+    }
+  </section>
+</div>
+

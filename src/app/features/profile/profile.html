@@ -1,0 +1,169 @@
+<div class="min-h-screen bg-background-light dark:bg-background-dark">
+  @if (isLoading()) {
+    <div class="flex items-center justify-center py-20">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+        <p class="text-slate-600 dark:text-slate-400">Yükleniyor...</p>
+      </div>
+    </div>
+  } @else if (user()) {
+    <!-- Profile Header -->
+    <div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col md:flex-row gap-6 md:items-center">
+          <!-- Avatar -->
+          <div class="relative z-10 shrink-0">
+            <div class="h-24 w-24 md:h-32 md:w-32 rounded-full border-4 border-white dark:border-slate-900 bg-white shadow-lg overflow-hidden group">
+              @if (user()?.profileImageUrl) {
+                <img [src]="user()?.profileImageUrl" 
+                     [alt]="user()?.userName"
+                     class="h-full w-full object-cover">
+              } @else {
+                <div class="h-full w-full flex items-center justify-center bg-gradient-to-br from-primary to-blue-600 text-white font-bold text-2xl md:text-3xl">
+                  {{ getInitials() }}
+                </div>
+              }
+              @if (isOwnProfile()) {
+                <button 
+                  (click)="onUploadProfileImage()"
+                  class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-full">
+                  <span class="material-symbols-outlined text-white text-xl">photo_camera</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- User Info -->
+          <div class="flex-1">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3 mb-2">
+                  {{ user()?.firstName }} {{ user()?.lastName }}
+                  @if (isOwnProfile()) {
+                    <span class="material-symbols-outlined text-primary text-xl" title="Doğrulanmış Kullanıcı">verified</span>
+                  }
+                </h1>
+                <p class="text-slate-500 dark:text-slate-400 text-base font-medium">@{{ user()?.userName }}</p>
+              </div>
+              @if (isOwnProfile()) {
+                <button 
+                  (click)="onEditProfile()"
+                  class="flex h-10 items-center justify-center gap-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 px-5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                  Profili Düzenle
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
+          <div class="text-center p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 hover:border-primary/30 transition-colors cursor-pointer group inline-block">
+            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Rotalar</p>
+            <p class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{{ routes().length }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Tabs & Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Tabs -->
+      <div class="border-b border-slate-200 dark:border-slate-800 mb-8">
+        <div class="flex gap-8 overflow-x-auto">
+          <button 
+            (click)="onTabChange('routes')"
+            [class.border-primary]="activeTab() === 'routes'"
+            [class.text-primary]="activeTab() === 'routes'"
+            [class.border-transparent]="activeTab() !== 'routes'"
+            [class.text-slate-500]="activeTab() !== 'routes'"
+            class="flex items-center gap-2 border-b-2 pb-4 text-sm font-bold tracking-wide whitespace-nowrap transition-colors">
+            <span class="material-symbols-outlined text-[20px]">map</span>
+            <span>Rotalarım</span>
+          </button>
+          <button 
+            (click)="onTabChange('comments')"
+            [class.border-primary]="activeTab() === 'comments'"
+            [class.text-primary]="activeTab() === 'comments'"
+            [class.border-transparent]="activeTab() !== 'comments'"
+            [class.text-slate-500]="activeTab() !== 'comments'"
+            class="flex items-center gap-2 border-b-2 pb-4 text-sm font-bold tracking-wide whitespace-nowrap transition-colors">
+            <span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+            <span>Yorumlar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Content -->
+      @if (activeTab() === 'routes') {
+        @if (routes().length === 0) {
+          <div class="text-center py-20">
+            <span class="material-symbols-outlined text-6xl text-slate-400 mb-4">map</span>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Henüz rota yok</h3>
+            <p class="text-slate-600 dark:text-slate-400 mb-6">
+              @if (isOwnProfile()) {
+                İlk rotanızı oluşturarak başlayın!
+              } @else {
+                Bu kullanıcı henüz rota oluşturmamış.
+              }
+            </p>
+            @if (isOwnProfile()) {
+              <a routerLink="/routes/create" 
+                 class="inline-block bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-sm">
+                Rota Oluştur
+              </a>
+            }
+          </div>
+        } @else {
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            @for (route of routes(); track route.id) {
+              <app-route-card 
+                [route]="route"
+                (click)="onRouteCardClick(route)">
+              </app-route-card>
+            }
+          </div>
+        }
+      } @else if (activeTab() === 'comments') {
+        @if (comments().length === 0) {
+          <div class="text-center py-20">
+            <span class="material-symbols-outlined text-6xl text-slate-400 mb-4">chat_bubble</span>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Henüz yorum yok</h3>
+            <p class="text-slate-600 dark:text-slate-400">Yaptığınız yorumlar burada görünecek.</p>
+          </div>
+        } @else {
+          <div class="space-y-4">
+            @for (comment of comments(); track comment.id) {
+              <div class="bg-white dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div class="flex items-start gap-3">
+                  <div class="bg-primary rounded-full size-10 shrink-0 flex items-center justify-center">
+                    <span class="text-white text-sm font-bold">
+                      {{ comment.user?.firstName?.charAt(0) || 'A' }}{{ comment.user?.lastName?.charAt(0) || '' }}
+                    </span>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="font-semibold text-slate-900 dark:text-white text-sm">
+                        {{ comment.user ? (comment.user.firstName + ' ' + comment.user.lastName) : 'Anonim' }}
+                      </span>
+                      <span class="text-xs text-slate-500">
+                        {{ comment.createdDate | date:'dd MMMM yyyy, HH:mm':'tr-TR' }}
+                      </span>
+                    </div>
+                    <p class="text-sm text-slate-700 dark:text-slate-300 mb-2">{{ comment.content }}</p>
+                    <button 
+                      (click)="onCommentRouteClick(comment.routeId)"
+                      class="text-xs text-primary hover:text-primary-dark font-medium">
+                      Rotaya Git →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+  }
+</div>

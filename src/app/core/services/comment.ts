@@ -41,4 +41,9 @@ export class CommentService {
   delete(id: string): Observable<ApiResponse<any>> {
     return this.apiService.delete<ApiResponse<any>>(`/comments/${id}`);
   }
+
+  // Kullanıcıya göre yorumları getir
+  getByUser(userId: string): Observable<ApiResponse<CommentDetailDto[]>> {
+    return this.apiService.get<ApiResponse<CommentDetailDto[]>>(`/comments/user/${userId}`);
+  }
 }

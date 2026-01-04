@@ -11,7 +11,7 @@
               <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"></path>
             </svg>
           </div>
-          <h1 class="text-xl font-bold tracking-tight group-hover:text-primary transition-colors">RouteHub</h1>
+          <h1 class="text-xl font-bold tracking-tight group-hover:text-primary transition-colors">YolculukRotam</h1>
         </a>
 
         <!-- Desktop Navigation -->
@@ -31,6 +31,16 @@
              class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors">
             Kategoriler
           </a>
+          <a routerLink="/about" 
+             routerLinkActive="text-primary" 
+             class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors">
+            Hakkımızda
+          </a>
+          <a routerLink="/contact" 
+             routerLinkActive="text-primary" 
+             class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors">
+            İletişim
+          </a>
         </nav>
       </div>
 
@@ -47,8 +57,7 @@
         </button>
 
         <!-- Create Route Button - Desktop -->
-        <button *ngIf="authService.isAuthenticated()" 
-                (click)="navigateToCreate()"
+        <button (click)="navigateToCreate()"
                 class="hidden sm:flex items-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-semibold py-2 px-4 rounded transition-colors shadow-sm">
           <span class="material-symbols-outlined text-[20px]">add_location_alt</span>
           <span>Rota Oluştur</span>
@@ -125,16 +134,34 @@
          class="block px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded transition-colors">
         Kategoriler
       </a>
+      
+      <a routerLink="/about" 
+         (click)="toggleMobileMenu()"
+         routerLinkActive="text-primary bg-blue-50 dark:bg-blue-900/20"
+         class="block px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded transition-colors">
+        Hakkımızda
+      </a>
+      
+      <a routerLink="/contact" 
+         (click)="toggleMobileMenu()"
+         routerLinkActive="text-primary bg-blue-50 dark:bg-blue-900/20"
+         class="block px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded transition-colors">
+        İletişim
+      </a>
 
       <div class="border-t border-border-light dark:border-border-dark my-3"></div>
 
-      <!-- Mobile - Authenticated -->
-      <div *ngIf="authService.isAuthenticated()" class="space-y-3">
+      <!-- Mobile - Rota Oluştur (Herkes için) -->
+      <div class="space-y-3">
         <button (click)="navigateToCreate()"
                 class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-semibold py-2.5 px-4 rounded transition-colors">
           <span class="material-symbols-outlined text-[20px]">add_location_alt</span>
           <span>Rota Oluştur</span>
         </button>
+      </div>
+
+      <!-- Mobile - Authenticated -->
+      <div *ngIf="authService.isAuthenticated()" class="space-y-3">
         
         <a routerLink="/profile" 
            (click)="toggleMobileMenu()"

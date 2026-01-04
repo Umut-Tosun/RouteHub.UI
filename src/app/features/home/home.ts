@@ -13,7 +13,7 @@ import { CategoryPill } from '../category-pill/category-pill';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouteCard, Footer, CategoryPill],
+  imports: [CommonModule, RouterLink, RouteCard, CategoryPill],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
@@ -70,7 +70,7 @@ export class Home implements OnInit {
   onSearch(): void {
     const query = this.searchQuery();
     if (query.trim()) {
-      console.log('Arama:', query);
+      this.router.navigate(['/routes'], { queryParams: { search: query.trim() } });
     }
   }
 
@@ -81,5 +81,9 @@ export class Home implements OnInit {
 
   onRouteCardClick(route: RouteModel): void {
     this.router.navigate(['/routes', route.routeLink]);
+  }
+
+  onCategoryClick(category: Category): void {
+    this.router.navigate(['/categories'], { queryParams: { category: category.id } });
   }
 }

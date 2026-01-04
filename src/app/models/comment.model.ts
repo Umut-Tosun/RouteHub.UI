@@ -14,6 +14,8 @@ export interface CommentBasicDto {
   content: string;
   createdDate: Date;
   user?: UserBasicDto;
+  // Recursive yapı: Reply'ların da reply'ları olabilir
+  replies?: CommentBasicDto[];
 }
 
 export interface CommentDetailDto {
@@ -29,6 +31,7 @@ export interface CommentDetailDto {
 
 export interface CreateCommentRequest {
   routeId: string;
+  userId: string;
   content: string;
   parentCommentId?: string;
 }

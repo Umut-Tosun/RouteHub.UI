@@ -1,0 +1,87 @@
+<div class="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark px-4 py-12">
+  <div class="w-full max-w-md">
+    <!-- Logo & Header -->
+    <div class="text-center mb-8">
+      <a routerLink="/" class="inline-flex items-center gap-2 mb-6 group">
+        <div class="size-10 text-primary">
+          <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"></path>
+          </svg>
+        </div>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white group-hover:text-primary transition-colors">YolculukRotam</h1>
+      </a>
+      <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Hoş Geldiniz</h2>
+      <p class="text-slate-600 dark:text-slate-400">Hesabınıza giriş yapın</p>
+    </div>
+
+    <!-- Login Form Card -->
+    <div class="bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 p-8">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        
+        <!-- Error Message -->
+        <div *ngIf="errorMessage()" 
+             class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
+          {{ errorMessage() }}
+        </div>
+
+        <!-- Email Field -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            E-posta
+          </label>
+          <input 
+            id="email"
+            type="email"
+            formControlName="email"
+            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            placeholder="ornek@email.com"
+            [class.border-red-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          <p *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" 
+             class="mt-1 text-sm text-red-600 dark:text-red-400">
+            <span *ngIf="loginForm.get('email')?.errors?.['required']">E-posta gereklidir</span>
+            <span *ngIf="loginForm.get('email')?.errors?.['email']">Geçerli bir e-posta adresi girin</span>
+          </p>
+        </div>
+
+        <!-- Password Field -->
+        <div>
+          <label for="password" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            Şifre
+          </label>
+          <input 
+            id="password"
+            type="password"
+            formControlName="password"
+            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            placeholder="••••••••"
+            [class.border-red-500]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <p *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" 
+             class="mt-1 text-sm text-red-600 dark:text-red-400">
+            <span *ngIf="loginForm.get('password')?.errors?.['required']">Şifre gereklidir</span>
+            <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Şifre en az 6 karakter olmalıdır</span>
+          </p>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit"
+          [disabled]="isLoading() || loginForm.invalid"
+          class="w-full bg-primary hover:bg-primary-dark disabled:bg-slate-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2">
+          <span *ngIf="isLoading()" class="animate-spin">⏳</span>
+          <span>{{ isLoading() ? 'Giriş yapılıyor...' : 'Giriş Yap' }}</span>
+        </button>
+      </form>
+
+      <!-- Register Link -->
+      <div class="mt-6 text-center">
+        <p class="text-sm text-slate-600 dark:text-slate-400">
+          Hesabınız yok mu?
+          <a routerLink="/auth/register" class="text-primary hover:text-primary-dark font-semibold ml-1 transition-colors">
+            Kayıt Ol
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+

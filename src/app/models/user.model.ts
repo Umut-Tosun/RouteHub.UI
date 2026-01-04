@@ -34,6 +34,20 @@ export interface GetUserByIdQueryResult {
   email: string;
   userName: string;
   profileImageUrl?: string;
+  routes?: RouteBasicDto[];
+  comments?: any[];
+}
+
+export interface RouteBasicDto {
+  id: string;
+  title: string;
+  routeLink: string;
+  isPublic: boolean;
+  status: number;
+  viewCount: number;
+  thumbnailUrl?: string;
+  stopCount: number;
+  commentCount: number;
 }
 
 export interface LoginRequest {

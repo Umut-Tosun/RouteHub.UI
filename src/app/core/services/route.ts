@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ApiResponse } from '../../models/api-response.model';
-import { Route, RouteDetailDto } from '../../models/route.model';
+import { Route, RouteDetailDto, CreateRouteRequest } from '../../models/route.model';
 import { ApiService } from './api.service';
 
 @Injectable({
@@ -47,15 +47,10 @@ export class RouteService {
     return this.apiService.get<ApiResponse<Route[]>>('/routes/popular');
   }
 
-  /* Yeni rota oluştur (AUTH gerekli)
+  // Yeni rota oluştur (AUTH gerekli)
   create(data: CreateRouteRequest): Observable<ApiResponse<any>> {
     return this.apiService.post<ApiResponse<any>>('/routes', data);
   }
-
-  // Rota güncelle (AUTH gerekli)
-  update(data: UpdateRouteRequest): Observable<ApiResponse<any>> {
-    return this.apiService.put<ApiResponse<any>>('/routes', data);
-  }-*/
 
   // Rota sil (AUTH gerekli)
   delete(id: string): Observable<ApiResponse<any>> {

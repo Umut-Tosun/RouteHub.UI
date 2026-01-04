@@ -36,8 +36,18 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             errorMessage = 'Sunucu hatası. Lütfen daha sonra tekrar deneyin.';
             break;
           default:
-            if (error.error?.errorMessages?.length > 0) {
-              errorMessage = error.error.errorMessages.join(', ');
+            // Backend'den gelen BaseResult yapısını kontrol et
+            if (error.error) {
+              // BaseResult yapısı: messages array'i var
+              if (error.error.messages && Array.isArray(error.error.messages) && error.error.messages.length > 0) {
+                errorMessage = error.error.messages.map((msg: any) => msg.message || msg.Message).join(', ');
+              } else if (error.error.errorMessages && Array.isArray(error.error.errorMessages) && error.error.errorMessages.length > 0) {
+                errorMessage = error.error.errorMessages.join(', ');
+              } else if (error.error.message) {
+                errorMessage = error.error.message;
+              } else {
+                errorMessage = `Hata kodu: ${error.status}`;
+              }
             } else {
               errorMessage = `Hata kodu: ${error.status}`;
             }

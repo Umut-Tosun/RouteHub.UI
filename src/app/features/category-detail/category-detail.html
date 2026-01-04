@@ -1,0 +1,76 @@
+<div class="min-h-screen bg-background-light dark:bg-background-dark">
+  @if (isLoading()) {
+    <div class="flex items-center justify-center py-20">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+        <p class="text-slate-600 dark:text-slate-400">Yükleniyor...</p>
+      </div>
+    </div>
+  } @else if (notFound()) {
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="text-center">
+        <span class="material-symbols-outlined text-6xl text-slate-400 mb-4">category</span>
+        <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Kategori Bulunamadı</h1>
+        <p class="text-slate-600 dark:text-slate-400 mb-6">
+          Aradığınız kategori mevcut değil veya silinmiş olabilir.
+        </p>
+        <a routerLink="/routes" 
+           class="inline-block bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition-colors">
+          Tüm Rotalara Dön
+        </a>
+      </div>
+    </div>
+  } @else if (category()) {
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary via-blue-600 to-background-dark py-12 lg:py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex flex-wrap gap-2 text-sm text-blue-100 mb-4">
+          <a routerLink="/" class="hover:text-white transition-colors">Ana Sayfa</a>
+          <span>/</span>
+          <a routerLink="/routes" class="hover:text-white transition-colors">Rotalar</a>
+          <span>/</span>
+          <span class="text-white">{{ category()?.name }}</span>
+        </nav>
+        
+        <div class="flex items-center gap-4">
+          @if (category()?.icon) {
+            <div class="text-6xl">{{ category()?.icon }}</div>
+          }
+          <div>
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">{{ category()?.name }}</h1>
+            <p class="text-blue-100 text-lg">
+              {{ routes().length }} rota bulundu
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Routes Grid -->
+    <section class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      @if (routes().length === 0) {
+        <div class="text-center py-20">
+          <span class="material-symbols-outlined text-6xl text-slate-400 mb-4">explore</span>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Bu kategoride rota yok</h3>
+          <p class="text-slate-600 dark:text-slate-400 mb-6">
+            Bu kategoride henüz rota eklenmemiş. İlk rotayı siz oluşturun!
+          </p>
+          <a routerLink="/routes" 
+             class="inline-block bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition-colors">
+            Tüm Rotalara Dön
+          </a>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          @for (route of routes(); track route.id) {
+            <app-route-card 
+              [route]="route"
+              (click)="onRouteCardClick(route)">
+            </app-route-card>
+          }
+        </div>
+      }
+    </section>
+  }
+</div>
+
