@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, inject, signal } from '@angular/core'
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import * as L from 'leaflet';
 import { RouteService } from '../../core/services/route';
 import { StopService } from '../../core/services/stop';
@@ -9,6 +10,7 @@ import { CategoryService } from '../../core/services/category';
 import { AuthService } from '../../core/services/auth.service';
 import { Category } from '../../models/category.model';
 import { CreateRouteRequest, CreateStopRequest } from '../../models/route.model';
+import { ApiService } from '../../core/services/api.service';
 
 interface StopFormData {
   title: string;
@@ -32,6 +34,8 @@ export class RouteCreateComponent implements OnInit, AfterViewInit {
   private categoryService = inject(CategoryService);
   authService = inject(AuthService);
   private router = inject(Router);
+  private toastr = inject(ToastrService);
+  private apiService = inject(ApiService);
 
   routeForm: FormGroup;
   categories = signal<Category[]>([]);
@@ -259,8 +263,7 @@ export class RouteCreateComponent implements OnInit, AfterViewInit {
   createStops(routeId: string): void {
     const stops = this.stops();
     if (stops.length === 0) {
-      this.isSubmitting.set(false);
-      this.router.navigate(['/routes', this.generateRouteLink(this.routeForm.value.title)]);
+      this.addCategoriesToRoute(routeId);
       return;
     }
 
@@ -279,19 +282,60 @@ export class RouteCreateComponent implements OnInit, AfterViewInit {
         next: () => {
           completed++;
           if (completed === stops.length) {
-            this.isSubmitting.set(false);
-            this.router.navigate(['/routes', this.generateRouteLink(this.routeForm.value.title)]);
+            this.addCategoriesToRoute(routeId);
           }
         },
         error: () => {
           completed++;
           if (completed === stops.length) {
-            this.isSubmitting.set(false);
-            this.router.navigate(['/routes', this.generateRouteLink(this.routeForm.value.title)]);
+            this.addCategoriesToRoute(routeId);
           }
         }
       });
     });
+  }
+
+  addCategoriesToRoute(routeId: string): void {
+    const selectedCats = this.selectedCategories();
+    if (selectedCats.length === 0) {
+      this.finishRouteCreation(routeId);
+      return;
+    }
+
+    let completed = 0;
+    selectedCats.forEach((categoryId) => {
+      this.apiService.post(`/routes/${routeId}/categories/${categoryId}`, {}).subscribe({
+        next: () => {
+          completed++;
+          if (completed === selectedCats.length) {
+            this.finishRouteCreation(routeId);
+          }
+        },
+        error: () => {
+          completed++;
+          if (completed === selectedCats.length) {
+            this.finishRouteCreation(routeId);
+          }
+        }
+      });
+    });
+  }
+
+  finishRouteCreation(routeId: string): void {
+    this.isSubmitting.set(false);
+    const routeLink = this.generateRouteLink(this.routeForm.value.title);
+    
+    this.toastr.success('Rota başarıyla oluşturuldu!', 'Başarılı', {
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      progressBar: true,
+      closeButton: true
+    });
+    
+    // Rota detay sayfasına yönlendir
+    setTimeout(() => {
+      this.router.navigate(['/routes', routeLink]);
+    }, 500);
   }
 }
 
