@@ -200,34 +200,16 @@ export class RouteDetail implements OnInit, AfterViewInit {
 
     this.isSubmittingComment.set(true);
     
-    // replyingTo() bir comment id veya reply id olabilir
-    // Eğer reply id ise, ana comment id'sini bul
+    // replyingTo() direkt olarak yanıt verilen yorumun/reply'nin ID'si
+    // Backend artık direkt bu ID'yi parentCommentId olarak kullanıyor
+    // GetCommentsByRouteIdQueryHandler recursive olarak ağaç yapısını oluşturuyor
     const replyingToId = this.replyingTo()!;
-    const allComments = this.comments();
-    let parentCommentId = replyingToId;
-    
-    // Eğer replyingTo bir reply ise, ana comment id'sini bul
-    for (const comment of allComments) {
-      if (comment.id === replyingToId) {
-        // Direkt comment'e yanıt veriliyor
-        parentCommentId = comment.id;
-        break;
-      }
-      if (comment.replies) {
-        const reply = comment.replies.find(r => r.id === replyingToId);
-        if (reply) {
-          // Bir reply'a yanıt veriliyor, ana comment'e bağla
-          parentCommentId = comment.id;
-          break;
-        }
-      }
-    }
     
     const replyData: CreateCommentRequest = {
       routeId: this.routeDetail()!.id,
       userId: currentUser.id,
       content: this.replyForm.value.content,
-      parentCommentId: parentCommentId || undefined
+      parentCommentId: replyingToId // Direkt yanıt verilen yorumun/reply'nin ID'sini gönder
     };
 
     console.log('Reply gönderiliyor:', replyData);
