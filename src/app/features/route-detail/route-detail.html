@@ -1,0 +1,240 @@
+<!-- Hero Map -->
+<div id="route-map" class="relative w-full h-[350px] lg:h-[500px] bg-gray-200 dark:bg-gray-800"></div>
+
+<!-- Main Layout -->
+<div class="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+  
+  <!-- Left Content -->
+  <div class="flex-1 lg:w-[70%] flex flex-col gap-8">
+    
+    <!-- Header -->
+    <div class="flex flex-col gap-6">
+      <div class="flex items-center gap-2 text-sm">
+        <span *ngFor="let cat of routeDetail()?.categories?.slice(0, 3)"
+              class="bg-blue-50 dark:bg-blue-900/30 text-primary px-2.5 py-0.5 rounded text-xs font-semibold uppercase">
+          {{ cat.name }}
+        </span>
+      </div>
+      
+      <h1 class="text-gray-900 dark:text-white text-3xl sm:text-4xl font-black">
+        {{ routeDetail()?.title }}
+      </h1>
+
+      <!-- Creator -->
+      <div class="flex items-center gap-4 text-sm">
+        <div *ngIf="routeDetail()?.user" class="flex items-center gap-2">
+          <div class="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+            <span class="text-white text-xs font-bold">
+              {{ routeDetail()!.user!.firstName?.charAt(0) }}{{ routeDetail()!.user!.lastName?.charAt(0) }}
+            </span>
+          </div>
+          <span class="text-gray-600 dark:text-gray-300">
+            <span class="font-semibold text-gray-900 dark:text-white">
+              {{ routeDetail()!.user!.firstName }} {{ routeDetail()!.user!.lastName }}
+            </span> tarafından
+          </span>
+        </div>
+        <span class="text-gray-300 dark:text-gray-700">•</span>
+        <span class="text-gray-500 dark:text-gray-400">
+          {{ routeDetail()?.createdDate | date:'dd MMM yyyy' }}
+        </span>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 py-6 border-y border-gray-200 dark:border-gray-800">
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 text-xs font-medium uppercase">
+            <span class="material-symbols-outlined text-[18px]">visibility</span> Görüntülenme
+          </div>
+          <p class="text-xl font-bold text-gray-900 dark:text-white">{{ routeDetail()?.viewCount }}</p>
+        </div>
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 text-xs font-medium uppercase">
+            <span class="material-symbols-outlined text-[18px]">location_on</span> Durak
+          </div>
+          <p class="text-xl font-bold text-gray-900 dark:text-white">{{ routeDetail()?.stops?.length || 0 }}</p>
+        </div>
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 text-xs font-medium uppercase">
+            <span class="material-symbols-outlined text-[18px]">chat</span> Yorum
+          </div>
+          <p class="text-xl font-bold text-gray-900 dark:text-white">{{ routeDetail()?.comments?.length || 0 }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div *ngIf="routeDetail()?.description" 
+         class="bg-white dark:bg-[#151e2d] rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-800">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Rota Hakkında</h3>
+      <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+        {{ routeDetail()!.description }}
+      </p>
+    </div>
+
+    <!-- Stops Timeline -->
+    <div *ngIf="routeDetail()?.stops && routeDetail()!.stops!.length > 0">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">flag</span> Rota Durakları
+      </h3>
+      <div class="relative pl-6 border-l-2 border-gray-200 dark:border-gray-700 ml-3 space-y-8">
+        <div *ngFor="let stop of routeDetail()?.stops" class="relative pl-8">
+          <div class="absolute -left-[9px] top-1.5 w-[14px] h-[14px] rounded-full bg-white dark:bg-gray-900 border-[3px]"
+               [class.border-green-500]="stop.orderNumber === 1"
+               [class.border-red-500]="stop.orderNumber === routeDetail()!.stops!.length"
+               [class.border-primary]="stop.orderNumber !== 1 && stop.orderNumber !== routeDetail()!.stops!.length">
+          </div>
+          <div class="flex flex-col gap-2">
+            <h4 class="font-bold text-gray-900 dark:text-white text-base">
+              {{ stop.orderNumber }}. {{ stop.title }}
+            </h4>
+            <p *ngIf="stop.description" class="text-sm text-gray-600 dark:text-gray-300">
+              {{ stop.description }}
+            </p>
+            <p class="text-xs text-gray-500">
+              Konum: {{ stop.latitude.toFixed(4) }}, {{ stop.longitude.toFixed(4) }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comments -->
+    <div class="mt-8 border-t border-gray-200 dark:border-gray-800 pt-8">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6">
+        Yorumlar ({{ routeDetail()?.comments?.length || 0 }})
+      </h3>
+      
+      <!-- Comment Form - Auth Required -->
+      <div *ngIf="authService.isAuthenticated()" class="flex gap-4 mb-8">
+        <div class="bg-primary rounded-full size-10 shrink-0 flex items-center justify-center">
+          <span class="text-white text-sm font-bold">
+            {{ authService.currentUser()?.firstName?.charAt(0) }}
+          </span>
+        </div>
+        <div class="flex-1">
+          <textarea 
+            class="w-full bg-gray-50 dark:bg-[#151e2d] border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-y min-h-[80px]" 
+            placeholder="Deneyimlerinizi paylaşın..."></textarea>
+          <div class="flex justify-end mt-2">
+            <button class="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium">
+              Yorum Yap
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Login Required -->
+      <div *ngIf="!authService.isAuthenticated()" class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center mb-8">
+        <p class="text-gray-600 dark:text-gray-400 mb-3">Yorum yapmak için giriş yapın</p>
+        <a routerLink="/auth/login" 
+           class="inline-block bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded font-medium">
+          Giriş Yap
+        </a>
+      </div>
+
+      <!-- Comment List -->
+      <div class="flex flex-col gap-6">
+        <div *ngFor="let comment of routeDetail()?.comments" class="flex gap-4">
+          <div class="bg-primary rounded-full size-10 shrink-0 flex items-center justify-center">
+            <span class="text-white text-sm font-bold">
+              {{ comment.user?.firstName?.charAt(0) || 'A' }}
+            </span>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-bold text-gray-900 dark:text-white text-sm">
+                {{ comment.user ? (comment.user.firstName + ' ' + comment.user.lastName) : 'Anonim' }}
+              </span>
+              <span class="text-xs text-gray-500">
+                {{ comment.createdDate | date:'dd MMM yyyy, HH:mm' }}
+              </span>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-300">{{ comment.content }}</p>
+            
+            <!-- Reply Button -->
+            <button *ngIf="authService.isAuthenticated()" 
+                    class="text-xs text-gray-500 hover:text-primary mt-2">
+              Yanıtla
+            </button>
+
+            <!-- Replies -->
+            <div *ngIf="comment.replies && comment.replies.length > 0" 
+                 class="mt-4 ml-4 pl-4 border-l-2 border-gray-200 dark:border-gray-700 space-y-4">
+              <div *ngFor="let reply of comment.replies" class="flex gap-3">
+                <div class="bg-gray-400 rounded-full size-8 shrink-0 flex items-center justify-center">
+                  <span class="text-white text-xs font-bold">
+                    {{ reply.user?.firstName?.charAt(0) || 'A' }}
+                  </span>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="font-semibold text-gray-900 dark:text-white text-sm">
+                      {{ reply.user ? (reply.user.firstName + ' ' + reply.user.lastName) : 'Anonim' }}
+                    </span>
+                    <span class="text-xs text-gray-500">
+                      {{ reply.createdDate | date:'dd MMM yyyy, HH:mm' }}
+                    </span>
+                  </div>
+                  <p class="text-sm text-gray-600 dark:text-gray-300">{{ reply.content }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="!routeDetail()?.comments || routeDetail()!.comments!.length === 0" 
+             class="text-gray-500 text-sm text-center py-8">
+          Henüz yorum yok. İlk yorumu siz yapın!
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="lg:w-[30%] flex flex-col gap-6">
+    <div class="sticky top-[88px] flex flex-col gap-6">
+      
+      <!-- Quick Info -->
+      <div class="bg-white dark:bg-[#151e2d] rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-5">
+        <h3 class="font-bold text-gray-900 dark:text-white mb-4 text-sm uppercase tracking-wide">
+          Rota Detayları
+        </h3>
+        <div class="flex flex-col gap-4">
+          <div class="flex justify-between items-center pb-3 border-b border-gray-100 dark:border-gray-800">
+            <span class="text-gray-500 dark:text-gray-400 text-sm">Durum</span>
+            <span class="font-medium text-gray-900 dark:text-white text-sm">
+              {{ routeDetail()?.isPublic ? 'Herkese Açık' : 'Özel' }}
+            </span>
+          </div>
+          <div class="flex justify-between items-center pb-3 border-b border-gray-100 dark:border-gray-800">
+            <span class="text-gray-500 dark:text-gray-400 text-sm">Oluşturulma</span>
+            <span class="font-medium text-gray-900 dark:text-white text-sm">
+              {{ routeDetail()?.createdDate | date:'dd MMM yyyy' }}
+            </span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-500 dark:text-gray-400 text-sm">Durak Sayısı</span>
+            <span class="font-medium text-gray-900 dark:text-white text-sm">
+              {{ routeDetail()?.stops?.length || 0 }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Share -->
+      <div class="bg-white dark:bg-[#151e2d] rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-5">
+        <h3 class="font-bold text-gray-900 dark:text-white mb-4 text-sm uppercase tracking-wide">
+          Rotayı Paylaş
+        </h3>
+        <button class="w-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-white font-medium py-2.5 px-4 rounded flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">share</span>
+          Linki Kopyala
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

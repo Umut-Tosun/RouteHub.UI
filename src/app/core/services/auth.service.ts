@@ -61,4 +61,7 @@ export class AuthService {
   getToken(): string | null {
     return this.storageService.getToken();
   }
+  getCurrentUser(): any | null {
+  return this.currentUser();
+}
 }

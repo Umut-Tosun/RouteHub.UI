@@ -1,0 +1,5 @@
+/* CategoryPill Component Styles */
+
+:host {
+  display: inline-block;
+}

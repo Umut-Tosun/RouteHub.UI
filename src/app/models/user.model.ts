@@ -14,7 +14,6 @@ export interface UserBasicDto {
   lastName: string;
   userName: string;
   profileImageUrl?: string;
-  fullName: string;
 }
 
 export interface GetUsersQueryResult {
@@ -35,8 +34,6 @@ export interface GetUserByIdQueryResult {
   email: string;
   userName: string;
   profileImageUrl?: string;
-  // routes?: RouteBasicDto[]; // Sonra açılacak
-  // comments?: CommentBasicDto[]; // Sonra açılacak
 }
 
 export interface LoginRequest {
